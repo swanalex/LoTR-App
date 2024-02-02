@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoTR App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h2>Welcome to my LoTR App!</h2>
+    <p>Instructions:
+        Hello! And welcome to my Lord of the Rings web application!
+        Here, you will find three buttons which can be interacted with by clicking them.
+    </p>
+
+    <p>The first two buttons will display random character and quote information to the screen, respectively.
+        If you click the button again, the currently displayed info will be cleared and the new info will be displayed instead.
+    </p>
+
+    <p>The third button will clear the screen of all text.</p>
+
+    <p>The character info is from the books, while the quotes are from the LoTR movies (including the Hobbit series).</p>
+
+    <p>This information is available via a public API: https://the-one-api.dev/
+        Note: this public API limits API calls to 100 every 10 minutes, so be careful when clicking very fast! Have fun and enjoy!
+    </p>
+
+    <form method="post" action="{{ url_for('index') }}">
+        <button id="button1" type="submit" name="button" value="get_char">Random Character Button!</button>
+    </form>
+    <p></p>
+    <form method="post" action="{{ url_for('index') }}">
+        <button id="button2" type="submit" name="button" value="get_quote">Random Quote Button!</button>
+    </form>
+    <p></p>
+    <form method="post" action="{{ url_for('index') }}">
+        <button id="button3" type="submit" name="button" value="clear">Clear the Screen!</button>
+    </form>
+
+    <p>{{ text }}</p>
+</body>
+</html>
