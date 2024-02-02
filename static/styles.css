@@ -1,0 +1,17 @@
+
+
+h2 {
+    color: red;
+}
+
+#button1, #button2 {
+    color: blue;
+    background-color: orange;
+    border-radius: 5px;
+}
+
+#button1:hover, #button2:hover {
+    color: orange;
+    background-color: blue;
+    cursor: pointer;
+}
