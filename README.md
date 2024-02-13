@@ -1,3 +1,17 @@
 # LoTR-App
 
 A Flask-based web application that allows users to interact with ‘The One API’ (https://the-one-api.dev/) to retrieve information about characters and quotes from the world of J.R.R. Tolkien. This application provides a dynamic and engaging user experience by randomly selecting and displaying character details and quotes. Have fun and enjoy!
+
+# Communication Contract:
+A. Data will be programmatically requested from my microservice using the ZeroMQ(ZMQ) communication pipeline. My partner will import the ZMQ module to their app, and then setup a request socket like such:
+
+# ZeroMQ setup
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+# Note: this is an example port - my partner can use whatever port number they wish
+socket.connect("tcp://127.0.0.1:5555")
+
+They will then send a string to my microservice using socket.send_string(). Example:
+socket.send_string("Sending request for data!")
+
+My 
