@@ -20,3 +20,8 @@ My microservice will wait for the incoming string message requesting data using 
 B. Data will be programmatically received by my partner's application from my microservice by reading the response JSON object and assigning it to a variable. Example:  
 some_variable = socket.recv_json()  
 My partner can then parse this received message as they wish and use the data for their needs in their application.  
+
+
+
+
+  ![UML_Diagram](https://github.com/swanalex/LoTR-App/assets/86210924/39ca04e4-9db9-423e-acd0-42d78dfc84c6)
