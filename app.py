@@ -89,7 +89,7 @@ def index():
     cleared = ''
 
     if request.method == 'POST':
-        # num1, page_num, num2 = generate_random_numbers()
+        # num1, num2 = generate_random_numbers()
         num1 = random.randint(1, 933)
         num2 = random.randint(1, 2384)
 
