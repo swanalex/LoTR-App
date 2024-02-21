@@ -6,10 +6,12 @@ A Flask-based web application that allows users to interact with â€˜The One APIâ
 A. Data will be programmatically requested from my microservice using the ZeroMQ(ZMQ) communication pipeline. My partner will import the ZMQ module to their app, and then setup a request socket like such:
 
 (ZeroMQ setup)  
+```
 context = zmq.Context()  
 socket = context.socket(zmq.REQ)  
-(Note: this is an example port - my partner can use whatever port number they wish)  
-socket.connect("tcp://127.0.0.1:5555")  
+# (Note: this is an example port - my partner can use whatever port number they wish)  
+socket.connect("tcp://127.0.0.1:5555")
+```
   
 They will then send a string to my microservice using socket.send_string().  
 Example:  
