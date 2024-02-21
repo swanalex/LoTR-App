@@ -26,10 +26,16 @@ socket.send_string("hard")
 ```  
   
 My microservice will wait for the incoming string message requesting data using sockect.recv_string(), generate the 2 random numbers of the appropriate length, and send back a response message in the form of a JSON object using socket.send_json().  
-  
+
+How data will be sent back:  
+```
+{"num1": some_number, "num2": some_number}
+```
   
 B. Data will be programmatically received by my partner's application from my microservice by reading the response JSON object and assigning it to a variable. Example:  
-some_variable = socket.recv_json()  
+```
+some_variable = socket.recv_json()
+```
 My partner can then parse this received message as they wish and use the data for their needs in their application.  
 
 
