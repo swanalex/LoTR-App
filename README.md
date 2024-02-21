@@ -7,6 +7,7 @@ A. Data will be programmatically requested from my microservice using the ZeroMQ
 
 (ZeroMQ setup)  
 ```
+python
 context = zmq.Context()  
 socket = context.socket(zmq.REQ)  
 # (Note: this is an example port - my partner can use whatever port number they wish)  
@@ -16,14 +17,17 @@ socket.connect("tcp://127.0.0.1:5555")
 They will then send a string to my microservice using socket.send_string().  
 Example:  
 ```
+python
 socket.send_string("easy")
 ```
 or
 ```
+python
 socket.send_string("medium")
 ```
 or
 ```
+python
 socket.send_string("hard")
 ```  
   
@@ -31,11 +35,13 @@ My microservice will wait for the incoming string message requesting data using 
 
 How data will be sent back:  
 ```
+python
 {"num1": some_number, "num2": some_number}
 ```
   
 B. Data will be programmatically received by my partner's application from my microservice by reading the response JSON object and assigning it to a variable. Example:  
 ```
+python
 some_variable = socket.recv_json()
 ```
 My partner can then parse this received message as they wish and use the data for their needs in their application.  
