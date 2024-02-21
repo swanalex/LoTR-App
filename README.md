@@ -34,7 +34,7 @@ How data will be sent back:
 {"num1": some_number, "num2": some_number}
 ```
   
-B. Data will be programmatically received by my partner's application from my microservice by reading the response JSON object and assigning it to a variable. Example:  
+B. Data will be programmatically received by my partner's application from my microservice by reading the response using socket.recv_json(). Example:  
 ```python
 some_variable = socket.recv_json()
 ```
