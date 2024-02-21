@@ -12,8 +12,18 @@ socket = context.socket(zmq.REQ)
 socket.connect("tcp://127.0.0.1:5555")  
   
 They will then send a string to my microservice using socket.send_string().  
-Example: socket.send_string("Sending request for data!")  
-Example: socket.send_string("medium")  
+Example:  
+```
+socket.send_string("easy")
+```
+or
+```
+socket.send_string("medium")
+```
+or
+```
+socket.send_string("hard")
+```  
   
 My microservice will wait for the incoming string message requesting data using sockect.recv_string(), generate the 2 random numbers of the appropriate length, and send back a response message in the form of a JSON object using socket.send_json().  
   
