@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 import requests
-import random
+import time
 import os
 from dotenv import load_dotenv
+from get_pic import get_pic
 import zmq
 
 
@@ -17,12 +18,20 @@ BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
 # change to socket # of partner's micro***
-socket.connect("tcp://127.0.0.1:5555")
+socket.connect("tcp://127.0.0.1:8888")
 
 
 def generate_random_numbers():
+    # print("We are calling partner's microservice! Requesting data!")
+    # time.sleep(2)
+    # print("Sending string 'generate_numbers' to the microservice.")
+    # time.sleep(2)
     socket.send_string("generate_numbers")
     response = socket.recv_json()
+    # print("We have received a response! Let's print it.")
+    # time.sleep(1)
+    # print("Response = ", response)
+    # time.sleep(1)
     return response["num1"], response["num2"]
 
 
@@ -32,10 +41,9 @@ movies_dict = {}
 quotes_list = []
 
 
-def initialize_dicts():
-    global chars_dict, movies_dict, quotes_list, chars_list
+def initialize_chars_dict():
+    global chars_dict, chars_list
     api_endpoint1 = 'https://the-one-api.dev/v2/character'
-    api_endpoint_movies = 'https://the-one-api.dev/v2/movie'
     headers = {'Authorization': f'Bearer {BEARER_TOKEN}'}
 
     # Compile chars_dict {'Char_name1': '_charID1', etc..}
@@ -47,6 +55,12 @@ def initialize_dicts():
         specific_char = data1['docs'][i]['name']
         chars_dict[specific_char] = char_obj['_id']
 
+
+def initialize_movies_dict():
+    global movies_dict
+    api_endpoint_movies = 'https://the-one-api.dev/v2/movie'
+    headers = {'Authorization': f'Bearer {BEARER_TOKEN}'}
+
     # Compile movies_dict {'Movie_name1': '_movieID1', etc..}
     response2 = requests.get(api_endpoint_movies, headers=headers)
     data2 = response2.json()
@@ -56,6 +70,10 @@ def initialize_dicts():
         specific_movie = data2['docs'][i]['name']
         movies_dict[specific_movie] = movie['_id']
 
+
+def initialize_quote_list():
+    global quotes_list
+    headers = {'Authorization': f'Bearer {BEARER_TOKEN}'}
     # Initialize quotes_list (list of quote objects)
     response3_page1 = requests.get('https://the-one-api.dev/v2/quote?page=1',
                                    headers=headers)
@@ -63,18 +81,18 @@ def initialize_dicts():
                                    headers=headers)
     response3_page3 = requests.get('https://the-one-api.dev/v2/quote?page=3',
                                    headers=headers)
-
     data3_page1 = response3_page1.json()
     data3_page2 = response3_page2.json()
     data3_page3 = response3_page3.json()
-
     quotes_list = data3_page1['docs']
     quotes_list += data3_page2['docs']
     quotes_list += data3_page3['docs']
 
 
-# Call the function to initialize both dictionaries when the app starts
-initialize_dicts()
+# Call the functions to initialize dicts and quote list when app starts
+initialize_chars_dict()
+initialize_movies_dict()
+initialize_quote_list()
 
 
 @app.route("/")
@@ -89,9 +107,8 @@ def index():
     cleared = ''
 
     if request.method == 'POST':
-        # num1, num2 = generate_random_numbers()
-        num1 = random.randint(1, 933)
-        num2 = random.randint(1, 2384)
+        show_image = True
+        num1, num2 = generate_random_numbers()
 
         # Getting character info
         # Take care of fields that have 'NaN' or '' to read 'Unknown'
@@ -131,7 +148,11 @@ def index():
         if button_value == 'get_char':
             return render_template('index.html', text=char_string)
         if button_value == 'get_quote':
-            return render_template('index.html', text=quote_string)
+            if get_pic(char):
+                character = get_pic(char)
+                return render_template('index.html', text=quote_string, image=character, show_image=show_image)
+            else:
+                return render_template('index.html', text=quote_string)
         else:
             return render_template('index.html', text=cleared)
 
