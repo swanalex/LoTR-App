@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request
 import requests
-import time
 import os
 from dotenv import load_dotenv
 from get_pic import get_pic
+from character import transform_character, transform_quote
 import zmq
 
 
@@ -17,21 +17,12 @@ BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
 # ZeroMQ setup
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-# change to socket # of partner's micro***
 socket.connect("tcp://127.0.0.1:8888")
 
 
 def generate_random_numbers():
-    # print("We are calling partner's microservice! Requesting data!")
-    # time.sleep(2)
-    # print("Sending string 'generate_numbers' to the microservice.")
-    # time.sleep(2)
     socket.send_string("generate_numbers")
     response = socket.recv_json()
-    # print("We have received a response! Let's print it.")
-    # time.sleep(1)
-    # print("Response = ", response)
-    # time.sleep(1)
     return response["num1"], response["num2"]
 
 
@@ -74,25 +65,30 @@ def initialize_movies_dict():
 def initialize_quote_list():
     global quotes_list
     headers = {'Authorization': f'Bearer {BEARER_TOKEN}'}
-    # Initialize quotes_list (list of quote objects)
-    response3_page1 = requests.get('https://the-one-api.dev/v2/quote?page=1',
+
+    response_page1 = requests.get('https://the-one-api.dev/v2/quote?page=1',
                                    headers=headers)
-    response3_page2 = requests.get('https://the-one-api.dev/v2/quote?page=2',
+    response_page2 = requests.get('https://the-one-api.dev/v2/quote?page=2',
                                    headers=headers)
-    response3_page3 = requests.get('https://the-one-api.dev/v2/quote?page=3',
+    response_page3 = requests.get('https://the-one-api.dev/v2/quote?page=3',
                                    headers=headers)
-    data3_page1 = response3_page1.json()
-    data3_page2 = response3_page2.json()
-    data3_page3 = response3_page3.json()
-    quotes_list = data3_page1['docs']
-    quotes_list += data3_page2['docs']
-    quotes_list += data3_page3['docs']
+    data_page1 = response_page1.json()
+    data_page2 = response_page2.json()
+    data_page3 = response_page3.json()
+    quotes_list = data_page1['docs']
+    quotes_list += data_page2['docs']
+    quotes_list += data_page3['docs']
 
 
 # Call the functions to initialize dicts and quote list when app starts
 initialize_chars_dict()
 initialize_movies_dict()
 initialize_quote_list()
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html')
 
 
 @app.route("/")
@@ -104,8 +100,6 @@ def home():
 def index():
     global chars_dict, movies_dict, quotes_list, chars_list
 
-    cleared = ''
-
     if request.method == 'POST':
         show_image = True
         num1, num2 = generate_random_numbers()
@@ -113,36 +107,12 @@ def index():
         # Getting character info
         # Take care of fields that have 'NaN' or '' to read 'Unknown'
         character = chars_list[num1]
-        name = character['name']
-        if name == 'NaN' or name == '':
-            name = 'Unknown'
-        race = character['race']
-        if race == 'NaN' or race == '':
-            race = 'Unknown'
-        gender = character['gender']
-        if gender == 'NaN' or gender == '':
-            gender = 'Unknown'
-        birth = character['birth']
-        if birth == 'NaN' or birth == '':
-            birth = 'Unknown'
-        death = character['death']
-        if death == 'NaN' or death == '':
-            death = 'Unknown or still living'
-        char_string = f'Name: {name}, Race: {race}, Gender: {gender}, Birth: {birth}, Death: {death}'
+        char_string = transform_character(character)
 
         # Use the global chars_dict and movies_dict to display movie name
         # and character name for each quote, instead of movie_id and char_id
         quote = quotes_list[num2]
-        dialogue = quote['dialog']
-        movie = quote['movie']
-        for name, id in movies_dict.items():
-            if movie == id:
-                movie = name
-        char = quote['character']
-        for name, id in chars_dict.items():
-            if char == id:
-                char = name
-        quote_string = f'Quote: "{dialogue}", Movie: {movie}, Character: {char}'
+        quote_string, char = transform_quote(quote, movies_dict, chars_dict)
 
         button_value = request.form['button']
         if button_value == 'get_char':
@@ -154,7 +124,7 @@ def index():
             else:
                 return render_template('index.html', text=quote_string)
         else:
-            return render_template('index.html', text=cleared)
+            return render_template('index.html', text='')
 
 
 if __name__ == '__main__':
