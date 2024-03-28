@@ -1,9 +1,14 @@
 import os
+from dotenv import load_dotenv
 
 
 def get_pic(character):
-    image_folder = 'C:/Users/16316/Desktop/OSU/CS 361/Simple_Flask_App/static/images'
-    for image in os.listdir(image_folder):
+
+    load_dotenv()
+    # replace with your own image folder location
+    IMAGE_FOLDER = os.environ.get('IMAGE_FOLDER')
+
+    for image in os.listdir(IMAGE_FOLDER):
         if image == character + '.jpg':
             return f'./images/{character}.jpg'
     return False
