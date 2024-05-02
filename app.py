@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from get_pic import get_pic
 from character import transform_character, transform_quote
 import zmq
+import random
 
 
 app = Flask(__name__)
@@ -20,10 +21,15 @@ socket = context.socket(zmq.REQ)
 socket.connect("tcp://127.0.0.1:8888")
 
 
+# def generate_random_numbers():
+#     socket.send_string("generate_numbers")
+#     response = socket.recv_json()
+#     return response["num1"], response["num2"]
+
 def generate_random_numbers():
-    socket.send_string("generate_numbers")
-    response = socket.recv_json()
-    return response["num1"], response["num2"]
+    num1 = random.randint(1, 932)
+    num2 = random.randint(1, 2383)
+    return num1, num2
 
 
 # Initialize chars_dict, movies_dict, and quotes_list
