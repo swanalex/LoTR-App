@@ -16,9 +16,9 @@ load_dotenv()
 BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
 
 # ZeroMQ setup
-context = zmq.Context()
-socket = context.socket(zmq.REQ)
-socket.connect("tcp://127.0.0.1:8888")
+# context = zmq.Context()
+# socket = context.socket(zmq.REQ)
+# socket.connect("tcp://127.0.0.1:8888")
 
 
 # def generate_random_numbers():
